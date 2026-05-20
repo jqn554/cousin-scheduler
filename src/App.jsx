@@ -14,38 +14,56 @@ import {
 function App() {
   const [name, setName] = useState('')
   const [hasPassport, setHasPassport] = useState(null)
-  const [availabilityType, setAvailabilityType] = useState('')
-  const [advanceNotice, setAdvanceNotice] = useState('')
+  const [availabilityType, setAvailabilityType] =
+    useState('')
+  const [advanceNotice, setAdvanceNotice] =
+    useState('')
 
-  const [showCalendar, setShowCalendar] = useState(false)
+  const [showCalendar, setShowCalendar] =
+    useState(false)
 
-  const [currentMonth, setCurrentMonth] = useState(
-    new Date(2026, 5)
-  )
+  const [currentMonth, setCurrentMonth] =
+    useState(new Date(2026, 5))
 
   const minMonth = new Date(2026, 5)
   const maxMonth = new Date(2026, 11)
 
-  const [selectedDates, setSelectedDates] = useState([])
+  const [selectedDates, setSelectedDates] =
+    useState([])
 
   const [loading, setLoading] = useState(false)
 
-  const [allSubmissions, setAllSubmissions] = useState([])
+  const [allSubmissions, setAllSubmissions] =
+    useState([])
 
-  const [isDragging, setIsDragging] = useState(false)
-  const [dragMode, setDragMode] = useState(null)
+  const [isDragging, setIsDragging] =
+    useState(false)
 
-  const [showAdmin, setShowAdmin] = useState(false)
+  const [dragMode, setDragMode] =
+    useState(null)
 
-  const adminPassword = 'cuffy4Bet'
+  const [showAdmin, setShowAdmin] =
+    useState(false)
+
+  const [selectedHeatmapDate,
+    setSelectedHeatmapDate] = useState(null)
+
+  const adminPassword =
+    import.meta.env.VITE_ADMIN_PASSWORD
 
   useEffect(() => {
     fetchSubmissions()
   }, [])
 
   function handleContinue() {
-    if (!name || hasPassport === null || !availabilityType) {
-      alert('Please complete all required fields.')
+    if (
+      !name ||
+      hasPassport === null ||
+      !availabilityType
+    ) {
+      alert(
+        'Please complete all required fields.'
+      )
       return
     }
 
@@ -76,7 +94,10 @@ function App() {
     setDragMode(null)
   }
 
-  function updateDate(dateString, shouldSelect) {
+  function updateDate(
+    dateString,
+    shouldSelect
+  ) {
     const currentlySelected =
       selectedDates.includes(dateString)
 
@@ -87,7 +108,10 @@ function App() {
       ])
     }
 
-    if (!shouldSelect && currentlySelected) {
+    if (
+      !shouldSelect &&
+      currentlySelected
+    ) {
       setSelectedDates((prev) =>
         prev.filter((d) => d !== dateString)
       )
@@ -130,7 +154,9 @@ function App() {
 
     await fetchSubmissions()
 
-    alert('Availability submitted successfully!')
+    alert(
+      'Availability submitted successfully!'
+    )
 
     setLoading(false)
   }
@@ -148,12 +174,40 @@ function App() {
     setAllSubmissions(data)
   }
 
+  async function handleDeleteSubmission(
+    id,
+    name
+  ) {
+    const confirmed = window.confirm(
+      `Delete submission for ${name}?`
+    )
+
+    if (!confirmed) return
+
+    const { error } = await supabase
+      .from('availability_submissions')
+      .delete()
+      .eq('id', id)
+
+    if (error) {
+      console.log(error)
+      alert('Error deleting submission.')
+      return
+    }
+
+    await fetchSubmissions()
+
+    alert('Submission deleted.')
+  }
+
   function getAvailabilityCount(dateString) {
     let count = 0
 
     allSubmissions.forEach((submission) => {
       const selected =
-        submission.selected_dates.includes(dateString)
+        submission.selected_dates.includes(
+          dateString
+        )
 
       if (
         submission.availability_type ===
@@ -172,6 +226,40 @@ function App() {
     return count
   }
 
+  function getPeopleForDate(dateString) {
+    const available = []
+    const unavailable = []
+
+    allSubmissions.forEach((submission) => {
+      const selected =
+        submission.selected_dates.includes(
+          dateString
+        )
+
+      let isAvailable = false
+
+      if (
+        submission.availability_type ===
+        'flexible_except'
+      ) {
+        isAvailable = !selected
+      } else {
+        isAvailable = selected
+      }
+
+      if (isAvailable) {
+        available.push(submission.name)
+      } else {
+        unavailable.push(submission.name)
+      }
+    })
+
+    return {
+      available,
+      unavailable
+    }
+  }
+
   function getBestWeekends() {
     const weekends = []
 
@@ -185,10 +273,14 @@ function App() {
         const friday = new Date(day)
 
         const saturday = new Date(day)
-        saturday.setDate(friday.getDate() + 1)
+        saturday.setDate(
+          friday.getDate() + 1
+        )
 
         const sunday = new Date(day)
-        sunday.setDate(friday.getDate() + 2)
+        sunday.setDate(
+          friday.getDate() + 2
+        )
 
         const fridayCount =
           getAvailabilityCount(
@@ -229,15 +321,19 @@ function App() {
   }
 
   function renderCalendar() {
-    const monthStart = startOfMonth(currentMonth)
-    const monthEnd = endOfMonth(currentMonth)
+    const monthStart =
+      startOfMonth(currentMonth)
+
+    const monthEnd =
+      endOfMonth(currentMonth)
 
     const days = eachDayOfInterval({
       start: monthStart,
       end: monthEnd
     })
 
-    const firstDayOffset = getDay(monthStart)
+    const firstDayOffset =
+      getDay(monthStart)
 
     return (
       <div>
@@ -254,82 +350,32 @@ function App() {
           </h3>
 
           {availabilityType ===
-            'flexible_except' ? (
+          'flexible_except' ? (
             <p>
-              Green dates mean you are currently
-              available. Select dates that do NOT
-              work for you.
+              Green dates mean you are
+              currently available. Select
+              dates that do NOT work for
+              you.
             </p>
           ) : (
             <p>
-              Red dates mean you are currently
-              unavailable. Select dates that WOULD
+              Red dates mean you are
+              currently unavailable.
+              Select dates that WOULD
               work for you.
             </p>
           )}
 
           <p>
-            You can click individual dates or
-            click-and-drag across multiple days.
+            You can click individual
+            dates or click-and-drag
+            across multiple days.
           </p>
-
-          <div
-            style={{
-              display: 'flex',
-              gap: '20px',
-              marginTop: '10px',
-              flexWrap: 'wrap'
-            }}
-          >
-            <div
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '8px'
-              }}
-            >
-              <div
-                style={{
-                  width: '20px',
-                  height: '20px',
-                  backgroundColor: '#4caf50',
-                  borderRadius: '4px'
-                }}
-              ></div>
-
-              <span>Available</span>
-            </div>
-
-            <div
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '8px'
-              }}
-            >
-              <div
-                style={{
-                  width: '20px',
-                  height: '20px',
-                  backgroundColor: '#f44336',
-                  borderRadius: '4px'
-                }}
-              ></div>
-
-              <span>Unavailable</span>
-            </div>
-          </div>
         </div>
+
         <div style={styles.monthHeader}>
           <button
-            style={{
-              ...styles.monthButton,
-              opacity:
-                currentMonth.getMonth() ===
-                minMonth.getMonth()
-                  ? 0.5
-                  : 1
-            }}
+            style={styles.monthButton}
             disabled={
               currentMonth.getMonth() ===
               minMonth.getMonth()
@@ -344,18 +390,14 @@ function App() {
           </button>
 
           <h2>
-            {format(currentMonth, 'MMMM yyyy')}
+            {format(
+              currentMonth,
+              'MMMM yyyy'
+            )}
           </h2>
 
           <button
-            style={{
-              ...styles.monthButton,
-              opacity:
-                currentMonth.getMonth() ===
-                maxMonth.getMonth()
-                  ? 0.5
-                  : 1
-            }}
+            style={styles.monthButton}
             disabled={
               currentMonth.getMonth() ===
               maxMonth.getMonth()
@@ -388,7 +430,7 @@ function App() {
           {Array.from({
             length: firstDayOffset
           }).map((_, i) => (
-            <div key={`empty-${i}`}></div>
+            <div key={i}></div>
           ))}
 
           {days.map((day) => {
@@ -398,12 +440,9 @@ function App() {
             )
 
             const isSelected =
-              selectedDates.includes(dateString)
-
-            const weekend =
-              getDay(day) === 5 ||
-              getDay(day) === 6 ||
-              getDay(day) === 0
+              selectedDates.includes(
+                dateString
+              )
 
             let backgroundColor
 
@@ -424,17 +463,18 @@ function App() {
               <div
                 key={dateString}
                 onMouseDown={() =>
-                  handleDateMouseDown(dateString)
+                  handleDateMouseDown(
+                    dateString
+                  )
                 }
                 onMouseEnter={() =>
-                  handleDateMouseEnter(dateString)
+                  handleDateMouseEnter(
+                    dateString
+                  )
                 }
                 style={{
                   ...styles.day,
-                  backgroundColor,
-                  border: weekend
-                    ? '2px solid #222'
-                    : '1px solid #ccc'
+                  backgroundColor
                 }}
               >
                 {format(day, 'd')}
@@ -448,7 +488,9 @@ function App() {
           onClick={handleFinish}
           disabled={loading}
         >
-          {loading ? 'Saving...' : 'Finish'}
+          {loading
+            ? 'Saving...'
+            : 'Finish'}
         </button>
       </div>
     )
@@ -463,7 +505,12 @@ function App() {
         Cousin Trip Scheduler
       </h1>
 
-      <div style={{ textAlign: 'center', marginBottom: '20px' }}>
+      <div
+        style={{
+          textAlign: 'center',
+          marginBottom: '20px'
+        }}
+      >
         <button
           style={{
             padding: '10px 16px',
@@ -483,7 +530,10 @@ function App() {
               'Enter admin password'
             )
 
-            if (enteredPassword === adminPassword) {
+            if (
+              enteredPassword ===
+              adminPassword
+            ) {
               setShowAdmin(true)
             } else {
               alert('Incorrect password')
@@ -510,11 +560,11 @@ function App() {
               onChange={(e) =>
                 setName(e.target.value)
               }
-              placeholder="Enter your name"
             />
 
             <label style={styles.label}>
-              Do you currently have a passport?
+              Do you currently have a
+              passport?
             </label>
 
             <div style={styles.buttonRow}>
@@ -569,7 +619,8 @@ function App() {
                   )
                 }
               >
-                Flexible except these dates
+                Flexible except these
+                dates
               </button>
 
               <button
@@ -635,31 +686,27 @@ function App() {
         {showAdmin && (
           <div
             style={{
+              marginTop: '40px',
               marginBottom: '40px',
               padding: '20px',
               backgroundColor: '#f7f7f7',
               borderRadius: '12px'
             }}
           >
-            <h2 style={{ marginBottom: '20px' }}>
-              Admin Panel
-            </h2>
+            <h2>Admin Panel</h2>
 
-            <div
-              style={{
-                display: 'flex',
-                flexDirection: 'column',
-                gap: '12px'
-              }}
-            >
-              {allSubmissions.map((submission) => (
+            {allSubmissions.map(
+              (submission) => (
                 <div
                   key={submission.id}
                   style={{
                     padding: '14px',
-                    backgroundColor: 'white',
+                    backgroundColor:
+                      'white',
                     borderRadius: '10px',
-                    border: '1px solid #ddd'
+                    border:
+                      '1px solid #ddd',
+                    marginBottom: '12px'
                   }}
                 >
                   <div>
@@ -668,78 +715,58 @@ function App() {
                   </div>
 
                   <div>
-                    <strong>Passport:</strong>{' '}
+                    <strong>
+                      Passport:
+                    </strong>{' '}
                     {submission.has_passport
                       ? 'Yes'
                       : 'No'}
                   </div>
 
                   <div>
-                    <strong>Availability:</strong>{' '}
+                    <strong>
+                      Availability:
+                    </strong>{' '}
                     {submission.availability_type ===
-                      'flexible_except'
+                    'flexible_except'
                       ? 'Flexible Except'
                       : 'Restricted PTO'}
                   </div>
 
-                  <div>
-                    <strong>Advance Notice:</strong>{' '}
-                    {submission.advance_notice ||
-                      'None'}
-                  </div>
-
-                  <div>
-                    <strong>Selected Dates:</strong>{' '}
-                    {
-                      submission.selected_dates
-                        .length
+                  <button
+                    style={{
+                      marginTop: '12px',
+                      padding:
+                        '8px 14px',
+                      borderRadius: '8px',
+                      border: 'none',
+                      backgroundColor:
+                        '#d32f2f',
+                      color: 'white',
+                      cursor: 'pointer'
+                    }}
+                    onClick={() =>
+                      handleDeleteSubmission(
+                        submission.id,
+                        submission.name
+                      )
                     }
-                  </div>
+                  >
+                    Delete Submission
+                  </button>
                 </div>
-              ))}
-            </div>
+              )
+            )}
           </div>
         )}
 
         {allSubmissions.length > 0 && (
           <div style={{ marginTop: '50px' }}>
-            <div
-              style={{
-                marginBottom: '40px',
-                padding: '20px',
-                backgroundColor: '#f7f7f7',
-                borderRadius: '12px'
-              }}
+            <h2
+              style={{ textAlign: 'center' }}
             >
-              <h2 style={{ marginBottom: '15px' }}>
-                Best Weekend Options
-              </h2>
-
-              {getBestWeekends().map(
-                (weekend, index) => (
-                  <div
-                    key={index}
-                    style={{
-                      padding: '10px 0',
-                      borderBottom:
-                        '1px solid #ddd'
-                    }}
-                  >
-                    <strong>
-                      #{index + 1}
-                    </strong>{' '}
-                    — {weekend.label}
-                    <div>
-                      Availability Score:{' '}
-                      {weekend.score}
-                    </div>
-                  </div>
-                )
-              )}
-            </div>
-
-            <h2 style={{ textAlign: 'center' }}>
-              Group Availability Heatmap
+              Group Availability
+              Heatmap
             </h2>
 
             <div
@@ -748,15 +775,15 @@ function App() {
                 justifyContent: 'center',
                 gap: '16px',
                 flexWrap: 'wrap',
-                marginBottom: '20px',
-                marginTop: '10px'
+                marginBottom: '20px'
               }}
             >
               <div style={styles.legendItem}>
                 <div
                   style={{
                     ...styles.legendColor,
-                    backgroundColor: '#1b5e20'
+                    backgroundColor:
+                      '#1b5e20'
                   }}
                 ></div>
                 <span>Excellent</span>
@@ -766,7 +793,8 @@ function App() {
                 <div
                   style={{
                     ...styles.legendColor,
-                    backgroundColor: '#4caf50'
+                    backgroundColor:
+                      '#4caf50'
                   }}
                 ></div>
                 <span>Good</span>
@@ -776,7 +804,8 @@ function App() {
                 <div
                   style={{
                     ...styles.legendColor,
-                    backgroundColor: '#8bc34a'
+                    backgroundColor:
+                      '#8bc34a'
                   }}
                 ></div>
                 <span>Moderate</span>
@@ -786,7 +815,8 @@ function App() {
                 <div
                   style={{
                     ...styles.legendColor,
-                    backgroundColor: '#f44336'
+                    backgroundColor:
+                      '#f44336'
                   }}
                 ></div>
                 <span>Poor</span>
@@ -795,10 +825,11 @@ function App() {
 
             {[5, 6, 7, 8, 9, 10, 11].map(
               (monthIndex) => {
-                const monthDate = new Date(
-                  2026,
-                  monthIndex
-                )
+                const monthDate =
+                  new Date(
+                    2026,
+                    monthIndex
+                  )
 
                 const monthStart =
                   startOfMonth(monthDate)
@@ -819,13 +850,14 @@ function App() {
                   <div
                     key={monthIndex}
                     style={{
-                      marginBottom: '40px'
+                      marginBottom:
+                        '40px'
                     }}
                   >
                     <h3
                       style={{
-                        textAlign: 'center',
-                        marginBottom: '10px'
+                        textAlign:
+                          'center'
                       }}
                     >
                       {format(
@@ -834,7 +866,11 @@ function App() {
                       )}
                     </h3>
 
-                    <div style={styles.weekdays}>
+                    <div
+                      style={
+                        styles.weekdays
+                      }
+                    >
                       {[
                         'Sun',
                         'Mon',
@@ -851,13 +887,16 @@ function App() {
                     </div>
 
                     <div
-                      style={styles.calendarGrid}
+                      style={
+                        styles.calendarGrid
+                      }
                     >
                       {Array.from({
-                        length: firstDayOffset
+                        length:
+                          firstDayOffset
                       }).map((_, i) => (
                         <div
-                          key={`empty-${i}`}
+                          key={i}
                         ></div>
                       ))}
 
@@ -874,16 +913,15 @@ function App() {
                           )
 
                         const intensity =
-                          allSubmissions.length ===
-                          0
-                            ? 0
-                            : count /
-                              allSubmissions.length
+                          count /
+                          allSubmissions.length
 
                         let backgroundColor =
                           '#f44336'
 
-                        if (intensity > 0.8) {
+                        if (
+                          intensity > 0.8
+                        ) {
                           backgroundColor =
                             '#1b5e20'
                         } else if (
@@ -905,14 +943,25 @@ function App() {
 
                         return (
                           <div
-                            key={dateString}
+                            key={
+                              dateString
+                            }
+                            onClick={() =>
+                              setSelectedHeatmapDate(
+                                dateString
+                              )
+                            }
                             style={{
                               ...styles.day,
                               backgroundColor,
-                              fontSize: '12px'
+                              fontSize:
+                                '12px'
                             }}
                           >
-                            {format(day, 'd')}
+                            {format(
+                              day,
+                              'd'
+                            )}
                           </div>
                         )
                       })}
@@ -921,6 +970,107 @@ function App() {
                 )
               }
             )}
+          </div>
+        )}
+
+        {selectedHeatmapDate && (
+          <div
+            style={{
+              position: 'fixed',
+              top: 0,
+              left: 0,
+              width: '100%',
+              height: '100%',
+              backgroundColor:
+                'rgba(0,0,0,0.5)',
+              display: 'flex',
+              justifyContent:
+                'center',
+              alignItems: 'center',
+              zIndex: 1000
+            }}
+            onClick={() =>
+              setSelectedHeatmapDate(null)
+            }
+          >
+            <div
+              style={{
+                backgroundColor: 'white',
+                padding: '30px',
+                borderRadius: '12px',
+                maxWidth: '400px',
+                width: '90%'
+              }}
+              onClick={(e) =>
+                e.stopPropagation()
+              }
+            >
+              <h2>
+                {format(
+                  new Date(
+                    selectedHeatmapDate
+                  ),
+                  'MMMM d, yyyy'
+                )}
+              </h2>
+
+              <div
+                style={{
+                  marginTop: '20px'
+                }}
+              >
+                <h3>Available</h3>
+
+                {getPeopleForDate(
+                  selectedHeatmapDate
+                ).available.map(
+                  (name) => (
+                    <div key={name}>
+                      ✅ {name}
+                    </div>
+                  )
+                )}
+              </div>
+
+              <div
+                style={{
+                  marginTop: '20px'
+                }}
+              >
+                <h3>Unavailable</h3>
+
+                {getPeopleForDate(
+                  selectedHeatmapDate
+                ).unavailable.map(
+                  (name) => (
+                    <div key={name}>
+                      ❌ {name}
+                    </div>
+                  )
+                )}
+              </div>
+
+              <button
+                style={{
+                  marginTop: '25px',
+                  padding:
+                    '10px 16px',
+                  border: 'none',
+                  borderRadius: '8px',
+                  backgroundColor:
+                    '#333',
+                  color: 'white',
+                  cursor: 'pointer'
+                }}
+                onClick={() =>
+                  setSelectedHeatmapDate(
+                    null
+                  )
+                }
+              >
+                Close
+              </button>
+            </div>
           </div>
         )}
       </div>
@@ -1053,7 +1203,7 @@ const styles = {
     width: '18px',
     height: '18px',
     borderRadius: '4px'
-  },
+  }
 }
 
 export default App
