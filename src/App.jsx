@@ -367,9 +367,10 @@ function App() {
           )}
 
           <p>
-            You can click individual
-            dates or click-and-drag
-            across multiple days.
+            Tap or click dates to select
+            them. Desktop users can also
+            click-and-drag across multiple
+            days.
           </p>
         </div>
 
