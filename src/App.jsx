@@ -725,6 +725,57 @@ function App() {
               Group Availability Heatmap
             </h2>
 
+            <div
+              style={{
+                display: 'flex',
+                justifyContent: 'center',
+                gap: '16px',
+                flexWrap: 'wrap',
+                marginBottom: '20px',
+                marginTop: '10px'
+              }}
+            >
+              <div style={styles.legendItem}>
+                <div
+                  style={{
+                    ...styles.legendColor,
+                    backgroundColor: '#1b5e20'
+                  }}
+                ></div>
+                <span>Excellent</span>
+              </div>
+
+              <div style={styles.legendItem}>
+                <div
+                  style={{
+                    ...styles.legendColor,
+                    backgroundColor: '#4caf50'
+                  }}
+                ></div>
+                <span>Good</span>
+              </div>
+
+              <div style={styles.legendItem}>
+                <div
+                  style={{
+                    ...styles.legendColor,
+                    backgroundColor: '#8bc34a'
+                  }}
+                ></div>
+                <span>Moderate</span>
+              </div>
+
+              <div style={styles.legendItem}>
+                <div
+                  style={{
+                    ...styles.legendColor,
+                    backgroundColor: '#f44336'
+                  }}
+                ></div>
+                <span>Poor</span>
+              </div>
+            </div>
+
             {[5, 6, 7, 8, 9, 10, 11].map(
               (monthIndex) => {
                 const monthDate = new Date(
@@ -973,7 +1024,19 @@ const styles = {
     fontWeight: 'bold',
     userSelect: 'none',
     margin: '0 auto'
-  }
+  },
+  
+  legendItem: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '6px'
+  },
+
+  legendColor: {
+    width: '18px',
+    height: '18px',
+    borderRadius: '4px'
+  },
 }
 
 export default App
