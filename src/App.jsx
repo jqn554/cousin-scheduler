@@ -631,8 +631,7 @@ function App() {
                   )
                 }
               >
-                Flexible except these
-                dates
+                Mostly flexible — select dates that DON'T work
               </button>
 
               <button
@@ -650,8 +649,17 @@ function App() {
                   )
                 }
               >
-                Restricted time off
+                Limited PTO — select dates that DO work
               </button>
+              <p
+                style={{
+                  marginTop: '12px',
+                  color: '#111'
+                }}
+              >
+                You'll select dates on the next
+                screen.
+              </p>
             </div>
 
             <label style={styles.label}>
