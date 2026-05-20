@@ -37,6 +37,8 @@ function App() {
 
   const [showAdmin, setShowAdmin] = useState(false)
 
+  const adminPassword = 'cuffy4Bet'
+
   useEffect(() => {
     fetchSubmissions()
   }, [])
@@ -471,7 +473,22 @@ function App() {
             backgroundColor: '#333',
             color: 'white'
           }}
-          onClick={() => setShowAdmin(!showAdmin)}
+          onClick={() => {
+            if (showAdmin) {
+              setShowAdmin(false)
+              return
+            }
+
+            const enteredPassword = prompt(
+              'Enter admin password'
+            )
+
+            if (enteredPassword === adminPassword) {
+              setShowAdmin(true)
+            } else {
+              alert('Incorrect password')
+            }
+          }}
         >
           {showAdmin
             ? 'Hide Admin Panel'
@@ -1025,7 +1042,7 @@ const styles = {
     userSelect: 'none',
     margin: '0 auto'
   },
-  
+
   legendItem: {
     display: 'flex',
     alignItems: 'center',
