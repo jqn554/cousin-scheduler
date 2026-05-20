@@ -767,6 +767,52 @@ function App() {
 
         {allSubmissions.length > 0 && (
           <div style={{ marginTop: '50px' }}>
+            <div
+              style={{
+                marginBottom: '40px',
+                padding: '20px',
+                backgroundColor: '#f7f7f7',
+                borderRadius: '12px'
+              }}
+            >
+              <h2 style={{ marginBottom: '15px' }}>
+                Best Weekend Options
+              </h2>
+
+              <p
+                style={{
+                  marginBottom: '20px',
+                  color: '#555',
+                  lineHeight: '1.5'
+                }}
+              >
+                Final dates will try to prioritize
+                people with limited PTO constraints.
+              </p>
+
+              {getBestWeekends().map(
+                (weekend, index) => (
+                  <div
+                    key={index}
+                    style={{
+                      padding: '10px 0',
+                      borderBottom:
+                        '1px solid #ddd'
+                    }}
+                  >
+                    <strong>
+                      #{index + 1}
+                    </strong>{' '}
+                    — {weekend.label}
+
+                    <div>
+                      Availability Score:{' '}
+                      {weekend.score}
+                    </div>
+                  </div>
+                )
+              )}
+            </div>
             <h2
               style={{
                 textAlign: 'center',
