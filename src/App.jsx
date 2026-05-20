@@ -372,6 +372,12 @@ function App() {
             click-and-drag across multiple
             days.
           </p>
+
+          <p>
+            Use the arrows above the
+            calendar to move between
+            months.
+          </p>
         </div>
 
         <div style={styles.monthHeader}>
