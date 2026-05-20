@@ -775,14 +775,19 @@ function App() {
                 borderRadius: '12px'
               }}
             >
-              <h2 style={{ marginBottom: '15px' }}>
+              <h2
+                style={{
+                  marginBottom: '15px',
+                  color: '#111'
+                }}
+              >
                 Best Weekend Options
               </h2>
 
               <p
                 style={{
                   marginBottom: '20px',
-                  color: '#555',
+                  color: '#111',
                   lineHeight: '1.5'
                 }}
               >
