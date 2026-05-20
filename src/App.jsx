@@ -1083,7 +1083,9 @@ const styles = {
     minHeight: '100vh',
     backgroundColor: '#f4f4f4',
     padding: '20px',
-    fontFamily: 'Arial, sans-serif'
+    fontFamily: 'Arial, sans-serif',
+    color: '#111',
+    colorScheme: 'light'    
   },
 
   title: {
@@ -1092,6 +1094,7 @@ const styles = {
   },
 
   card: {
+    color: '#111',
     maxWidth: '650px',
     margin: '0 auto',
     backgroundColor: 'white',
