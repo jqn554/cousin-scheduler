@@ -375,7 +375,11 @@ function App() {
 
         <div style={styles.monthHeader}>
           <button
-            style={styles.monthButton}
+            style={{
+              ...styles.monthButton,
+              color: '#111',
+              backgroundColor: '#eee'
+            }}
             disabled={
               currentMonth.getMonth() ===
               minMonth.getMonth()
@@ -389,15 +393,16 @@ function App() {
             ←
           </button>
 
-          <h2>
-            {format(
-              currentMonth,
-              'MMMM yyyy'
-            )}
+          <h2 style={{ color: '#111' }}>
+            {format(currentMonth, 'MMMM yyyy')}
           </h2>
 
           <button
-            style={styles.monthButton}
+            style={{
+              ...styles.monthButton,
+              color: '#111',
+              backgroundColor: '#eee'
+            }}
             disabled={
               currentMonth.getMonth() ===
               maxMonth.getMonth()
@@ -763,10 +768,12 @@ function App() {
         {allSubmissions.length > 0 && (
           <div style={{ marginTop: '50px' }}>
             <h2
-              style={{ textAlign: 'center' }}
+              style={{
+                textAlign: 'center',
+                color: '#111'
+              }}
             >
-              Group Availability
-              Heatmap
+              Group Availability Heatmap
             </h2>
 
             <div
