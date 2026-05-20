@@ -1163,7 +1163,10 @@ const styles = {
 
   title: {
     textAlign: 'center',
-    marginBottom: '20px'
+    marginBottom: '20px',
+    fontSize: 'clamp(2.5rem, 8vw, 5rem)',
+    lineHeight: '1.1',
+    color: '#111'
   },
 
   card: {
